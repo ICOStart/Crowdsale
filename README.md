@@ -39,8 +39,9 @@ Token contract:
 
 - The token contract mints a total supply of 60.000.000 ICH ERC20 tokens and disburses them to the address specified upon creation.
 - The tokens are born non-transferable and can be made transferable later by the contract owner.
-- Some owner-defined addresses *can* transfer the tokens even when they are locked. The sale and reservation contracts need to do that.
-- Tokens can be burned by their owner invoking a function of the token contract which will destroy them and reduce the total supply accordingly.
+- Some owner-defined addresses *can* transfer the tokens even while they are locked. The sale and reservation contracts need to do that.
+- The owner is automatically whitelisted. Transfering ownership also adds the new owner to the whitelist (and removes the former owner).
+- Tokens can be burned by their owner through a function of the token contract which will destroy them and reduce the total supply accordingly.
 - The contract features airdrop() and multiTransfer() functions to allow for multiple transfers in the same transactions (limited to 200 each time to prevent gas exhaustion).
 
 Sale contract:
