@@ -2,6 +2,8 @@
 
 This repository contains the contracts for the [icostart.ch][icostartsite] token sales.
 
+![ICOStart logo](icostart_logo.png)
+
 ## Contracts
 
 Please see the [contracts/](contracts) directory.
