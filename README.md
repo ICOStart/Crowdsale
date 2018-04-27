@@ -51,6 +51,8 @@ Sale contract:
 - The sale will only accept contributions if at least one period is defined, and only inside periods (not before the beginning of the first one, not after the end of the last one).
 - Has a whitelist of addresses that can contribute. Some whitelisted addresses might receive bonus tokens. The owner can add and remove whitelisted addresses (either single addresses or batches) and set a specific price for each one (which, if set, would override the current price for that specific contributing address; this allows reservation contracts).
 - Accepts ethers and distributes tokens immediately according to the current price determined for the sender.
+- Rejects transactions under 0.1 ethers.
+- Accepts transactions lower or equal to 5 ethers even from non-whitelisted senders.
 - Is deployed in two (or possibly more) instances, one for the presale and one for the sale.
 - The owner can close the sale ahead of time and withdraw unsold tokens (which can then be burned through the token contract).
 - Doesn't have a hard cap: the sale stops at the end of the last period, or when all tokens have been sold, or when the owner stops it.
