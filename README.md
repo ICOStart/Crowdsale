@@ -47,14 +47,14 @@ Token contract:
 Sale contract:
 
 - Is created with a given (maximum) amount of tokens to sell, an address (which is going to represent a hardware or other cold wallet) to which received funds are transfered, and a reference to the token contract as parameters.
-- After creation, the owner configures one or more sale periods, each of which consists of a start/end timestamp range and a price for the tokens sold in that period.
+- After creation, the owner configures one or more sale periods, each of which consists of a start/end timestamp range and a price (expressed as a rate) for the tokens sold in that period.
 - The sale will only accept contributions if at least one period is defined, and only inside periods (not before the beginning of the first one, not after the end of the last one).
-- Has a whitelist of addresses that can contribute. Some whitelisted addresses might receive bonus tokens. The owner can add and remove whitelisted addresses (either single addresses or batches) and set a specific price for each one (which, if set, would override the current price for that specific contributing address; this allows reservation contracts).
-- Accepts ethers and distributes tokens immediately according to the current price determined for the sender.
+- Has a whitelist of addresses that can contribute. Some whitelisted addresses can have a custom rate set so that they can receive bonus tokens. The owner can add and remove whitelisted addresses (either single addresses or batches) and set a specific custom rate for each one (which, if set, will override the default rate of the period that is current at the time of payment for that specific contributing address; this allows reservation contracts with fixed - possibly discounted - rates).
+- Accepts ethers and distributes tokens immediately according to the current rate determined for the sender.
 - Is deployed in two (or possibly more) instances, one for the presale and one for the sale.
 - The owner can close the sale ahead of time and withdraw unsold tokens (which can then be burned through the token contract).
-- Doesn't have a hard cap: the sale stops at the end of the last period, or when all tokens have been sold, or when the owner stops it.
-- Doesn't have any minimum goal or refund mechanism.
+- Doesn't have a hard cap: the sale stops at the end of the last period, or when all allowed tokens have been sold, or when the owner stops it.
+- Doesn't have any minimum goal or automatic refund mechanism.
 
 Reservation contract:
 
