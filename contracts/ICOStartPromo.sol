@@ -13,8 +13,8 @@ pragma solidity ^0.4.21;
 
 contract ICOStartPromo {
 
-  string public url = "https://icostart.ch/promo";
-  string public name = "_ICOStart Promo";
+  string public url = "https://icostart.ch/token-sale";
+  string public name = "icostart.ch/promo";
   string public symbol = "ICHP";
   uint8 public decimals = 18;
   uint256 public totalSupply = 1000000 ether;
