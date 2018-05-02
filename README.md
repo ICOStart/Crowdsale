@@ -66,6 +66,17 @@ Reservation contract:
 - A *separate* owner-callable function will distribute the received tokens to the contributing addresses. Since this is an O(n) function, caution must be excercised re. gas consumption.
 - Can be destroyed by the ower (which will collect any residual balance of both ethers and tokens in case something unexpected has occurred).
 
+Promo contract:
+
+An additional pseudo-token contract is created as a promotional tool. This contract:
+
+- Displays the same balance for any address.
+- Allows all ERC-20 operations but they have no effect.
+- Has a name, an url and a symbol (all can be set by the owner). The url point to a landing page possibly offering a discounted rate to anyone willing to participate in the ICO.
+- Supports an airdrop function that simulates Transfer events in order to have the virtual balance displayed in wallets that track these events.
+- Does not accept receiving ethers.
+- Can be destroyed by the owner.
+
 [icostartsite]: https://icostart.ch
 [solidity]: https://solidity.readthedocs.io/en/develop/
 [openzeppelin]: https://openzeppelin.org/
