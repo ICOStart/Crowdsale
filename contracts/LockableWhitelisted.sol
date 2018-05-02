@@ -3,7 +3,9 @@ pragma solidity ^0.4.21;
 import "zeppelin-solidity/contracts/ownership/Whitelist.sol";
 
 /**
- * @title Pausable
+ * @title A Whitelist contract that can be locked and unlocked. Provides a modifier
+ * to check for locked state plus functions and events. The contract is never locked for
+ * whitelisted addresses.
  * @dev Base contract which allows children to implement an emergency stop mechanism.
  */
 contract LockableWhitelisted is Whitelist {
@@ -17,8 +19,8 @@ contract LockableWhitelisted is Whitelist {
    * @dev Modifier to make a function callable only when the contract is not locked
    * or the caller is whitelisted.
    */
-  modifier whenNotLocked() {
-    require(!locked || whitelist[msg.sender]);
+  modifier whenNotLocked(address _address) {
+    require(!locked || whitelist[_address]);
     _;
   }
 
@@ -31,17 +33,19 @@ contract LockableWhitelisted is Whitelist {
   }
 
   /**
-   * @dev called by the owner to lock, triggers locked state
+   * @dev Called by the owner to lock.
    */
-  function lock() onlyOwner whenNotLocked public {
-    locked = true;
-    emit Locked();
+  function lock() onlyOwner public {
+    if (!locked) {
+      locked = true;
+      emit Locked();
+    }
   }
 
   /**
-   * @dev called by the owner to unlock, returns to normal state
+   * @dev Called by the owner to unlock.
    */
-  function unlock() onlyOwner public {
+  function unlock() onlyOwner public returns (bool) {
     if (locked) {
       locked = false;
       emit Unlocked();
