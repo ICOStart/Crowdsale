@@ -60,12 +60,15 @@ Sale contract:
 
 Reservation contract:
 
-- Is created with a hard cap (in ethers), a manager's fee %, and a reference to a sale contract as parameters.
+- Is created with a hard cap (in ethers), a manager's fee % and address, and a reference to a sale contract as parameters.
 - Receives ethers up to a given cap (specified on creation) and keeps track of contributing addresses.
 - Does *not* support whitelisting. Everyone can send up to the cap when the contract is enabled.
 - Can be paused/restarted by the owner. When paused, does not accept contributions.
-- Has a function that allows the owner to send all ethers (minus the pool manager's fee) to the specified crowdsale contract thus collecting the tokens. The reservation contract's address must have been whitelisted in the sale contract and the sale must be accepting contributions for this to succeed. All ethers are transfered, minus the manager's fee which is sent to an address specified by the caller (which should be the manager's address)).
-- A *separate* owner-callable function will distribute the received tokens to the contributing addresses. Since this is an O(n) function, caution must be excercised re. gas consumption.
+- Has a function that allows the owner to send all ethers (minus the pool manager's fee) to the specified crowdsale contract thus collecting the tokens. The reservation contract's address must have been whitelisted in the sale contract and the sale must be accepting contributions for this to succeed. All ethers are transfered, minus the manager's fee (if any) which is sent to the manager's address. All tokens are stored in the contract and can be claimed.
+- Has a separate owner-callable function that will cancel the resrvation and enable refunds.
+- Has a withdraw function that any contributor can call to get his contribution back if the reservation was canceled.
+- Has a claim function that any contributor can call to get his tokens (tokens must be unlocked, or the reservation contract must
+be whitelisted in the token contract for this to succeed).
 - Can be destroyed by the ower (which will collect any residual balance of both ethers and tokens in case something unexpected has occurred).
 
 Promo contract:
