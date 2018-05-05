@@ -2,7 +2,6 @@ import ether from './zeppelin-solidity/helpers/ether';
 import { advanceBlock } from './zeppelin-solidity/helpers/advanceToBlock'
 import { increaseTimeTo, duration } from './zeppelin-solidity/helpers/increaseTime'
 import latestTime from './zeppelin-solidity/helpers/latestTime'
-import EVMThrow from './zeppelin-solidity/helpers/EVMThrow'
 import EVMRevert from './zeppelin-solidity/helpers/EVMRevert';
 
 const BigNumber = web3.BigNumber;
@@ -40,12 +39,12 @@ contract('ICOStartSale', function ([owner, newOwner, whiteListedInvestor, nonWhi
   const EXPECTED_TOKEN_BIG_AMOUNT2 = RATE2.mul(INVESTED_BIG_AMOUNT); // token
 
   before(async function () {
-    // Advance to the next block to correctly read time in the solidity "now" function interpreted by testrpc
+    // Advance to the next block to correctly read time in the solidity "now" function
     await advanceBlock();
   })
 
   beforeEach(async function () {
-    // 2 periods, one week each.
+    // 4 periods, one week each.
     this.start1 = latestTime() + duration.weeks(1);
     this.end1 = this.start1 + duration.weeks(1);
     this.start2 = this.end1 + duration.seconds(1);

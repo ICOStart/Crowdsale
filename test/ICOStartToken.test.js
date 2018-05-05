@@ -1,5 +1,4 @@
 import ether from './zeppelin-solidity/helpers/ether';
-import EVMThrow from './zeppelin-solidity/helpers/EVMThrow';
 import EVMRevert from './zeppelin-solidity/helpers/EVMRevert';
 
 const BigNumber = web3.BigNumber;

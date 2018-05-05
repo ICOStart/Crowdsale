@@ -3,8 +3,10 @@ pragma solidity ^0.4.21;
 import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
 import "zeppelin-solidity/contracts/crowdsale/emission/AllowanceCrowdsale.sol";
 
-contract ICOStartSale is AllowanceCrowdsale, Pausable
-{
+contract ICOStartSale is
+  AllowanceCrowdsale,
+  Pausable {
+
   struct Period {
     uint256 startTimestamp;
     uint256 endTimestamp;
@@ -60,7 +62,7 @@ contract ICOStartSale is AllowanceCrowdsale, Pausable
    * @return true if the address was added to the whitelist, false if the address was already in the whitelist
    */
   function addAddressToWhitelist(address _address, uint256 _rate) onlyOwner public returns (bool success) {
-    require(_address != 0x0);
+    require(_address != address(0));
     success = false;
     if (!whitelistedAddresses[_address]) {
       whitelistedAddresses[_address] = true;
@@ -94,7 +96,7 @@ contract ICOStartSale is AllowanceCrowdsale, Pausable
    * false if the address wasn't in the whitelist in the first place.
    */
   function removeAddressFromWhitelist(address _address) onlyOwner public returns (bool success) {
-    require(_address != 0x0);
+    require(_address != address(0));
     success = false;
     if (whitelistedAddresses[_address]) {
       whitelistedAddresses[_address] = false;
