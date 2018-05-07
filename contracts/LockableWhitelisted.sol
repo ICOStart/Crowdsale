@@ -1,6 +1,6 @@
 pragma solidity ^0.4.21;
 
-import "zeppelin-solidity/contracts/ownership/Whitelist.sol";
+import "./zeppelin-solidity/contracts/ownership/Whitelist.sol";
 
 /**
  * @title A Whitelist contract that can be locked and unlocked. Provides a modifier

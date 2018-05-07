@@ -1,7 +1,7 @@
 pragma solidity ^0.4.21;
 
-import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
-import "zeppelin-solidity/contracts/crowdsale/emission/AllowanceCrowdsale.sol";
+import "./zeppelin-solidity/contracts/lifecycle/Pausable.sol";
+import "./zeppelin-solidity/contracts/crowdsale/emission/AllowanceCrowdsale.sol";
 
 contract ICOStartSale is
   AllowanceCrowdsale,

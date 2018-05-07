@@ -1,9 +1,9 @@
 pragma solidity ^0.4.21;
 
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "./zeppelin-solidity/contracts/math/SafeMath.sol";
+import "./zeppelin-solidity/contracts/lifecycle/Pausable.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "./ICOStartSale.sol";
 
 contract ICOStartReservation is Pausable {

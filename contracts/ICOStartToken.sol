@@ -1,8 +1,8 @@
 pragma solidity ^0.4.21;
 
-import "zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol";
-import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
-import "zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
 import "./LockableWhitelisted.sol";
 
 contract ICOStartToken is BurnableToken, MintableToken, DetailedERC20, LockableWhitelisted {
