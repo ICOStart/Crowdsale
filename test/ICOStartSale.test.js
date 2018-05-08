@@ -109,42 +109,32 @@ contract('ICOStartSale', function ([owner, newOwner, whiteListedInvestor, nonWhi
 
   it('should not accept payments before start', async function () {
     await this.sale.sendTransaction({ value: INVESTED_AMOUNT }).should.be.rejectedWith(EVMRevert);
-    await this.sale.buyTokens(whiteListedInvestor, { value: INVESTED_AMOUNT }).should.be.rejectedWith(EVMRevert);
   });
 
-  it('should accept big payments (direct) during the sale', async function () {
+  it('should accept big payments during the sale', async function () {
     await increaseTimeTo(this.start1);
     await this.sale.sendTransaction({ value: INVESTED_BIG_AMOUNT, from: whiteListedInvestor }).should.be.fulfilled;
-  });
-
-  it('should accept big payments (indirect) during the sale', async function () {
-    await increaseTimeTo(this.start1);
-    await this.sale.buyTokens(whiteListedInvestor, { value: INVESTED_BIG_AMOUNT }).should.be.fulfilled;
   });
 
   it('should accept payments during the sale', async function () {
     await increaseTimeTo(this.start1);
     await this.sale.sendTransaction({ value: INVESTED_AMOUNT, from: nonWhiteListedInvestor }).should.be.fulfilled;
-    await this.sale.buyTokens(nonWhiteListedInvestor, { value: INVESTED_AMOUNT }).should.be.fulfilled;
   });
 
   it('should reject big payments after end', async function () {
     await increaseTimeTo(this.afterEnd);
     await this.sale.sendTransaction({ value: INVESTED_BIG_AMOUNT, from: whiteListedInvestor }).should.be.rejectedWith(EVMRevert);
-    await this.sale.buyTokens(whiteListedInvestor, { value: INVESTED_BIG_AMOUNT }).should.be.rejectedWith(EVMRevert);
   });
 
   it('should reject payments after end', async function () {
     await increaseTimeTo(this.afterEnd);
     await this.sale.sendTransaction({ value: INVESTED_AMOUNT, from: nonWhiteListedInvestor }).should.be.rejectedWith(EVMRevert);
-    await this.sale.buyTokens(nonWhiteListedInvestor, { value: INVESTED_AMOUNT }).should.be.rejectedWith(EVMRevert);
   });
 
   it('should reject big payments by non-whitelisted investors', async function () {
     await increaseTimeTo(this.start1);
     (await this.sale.isAddressInWhitelist(nonWhiteListedInvestor)).should.be.false;
     await this.sale.sendTransaction({ value: INVESTED_BIG_AMOUNT, from: nonWhiteListedInvestor }).should.be.rejectedWith(EVMRevert);
-    await this.sale.buyTokens(nonWhiteListedInvestor, { value: INVESTED_BIG_AMOUNT }).should.be.rejectedWith(EVMRevert);
   });
 
   it('should actually add addresses to the whitelist', async function () {
@@ -163,14 +153,12 @@ contract('ICOStartSale', function ([owner, newOwner, whiteListedInvestor, nonWhi
     await increaseTimeTo(this.start1);
 
     await this.sale.sendTransaction({ value: INVESTED_MINIMUM_AMOUNT, from: other }).should.be.fulfilled;
-    await this.sale.buyTokens(other, { value: INVESTED_MINIMUM_AMOUNT }).should.be.fulfilled;
   });
 
   it('should reject very small payments', async function () {
     await increaseTimeTo(this.start1);
 
     await this.sale.sendTransaction({ value: INVESTED_VERY_SMALL_AMOUNT, from: other }).should.be.rejectedWith(EVMRevert);
-    await this.sale.buyTokens(other, { value: INVESTED_VERY_SMALL_AMOUNT }).should.be.rejectedWith(EVMRevert);
   });
 
   it('should reject payments if periods are deleted', async function () {
@@ -179,7 +167,6 @@ contract('ICOStartSale', function ([owner, newOwner, whiteListedInvestor, nonWhi
     await increaseTimeTo(this.start1);
 
     await this.sale.sendTransaction({ value: INVESTED_MINIMUM_AMOUNT, from: other }).should.be.rejectedWith(EVMRevert);
-    await this.sale.buyTokens(other, { value: INVESTED_MINIMUM_AMOUNT }).should.be.rejectedWith(EVMRevert);
   });
  
   it('should allow buying tokens upto the total available amount', async function () {

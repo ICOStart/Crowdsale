@@ -2,14 +2,16 @@ pragma solidity ^0.4.21;
 
 import "./zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./zeppelin-solidity/contracts/lifecycle/Pausable.sol";
-import "./zeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol";
 import "./zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "./ICOStartSale.sol";
+
+contract ICOStartSaleInterface {
+  ERC20 public token;
+}
 
 contract ICOStartReservation is Pausable {
   using SafeMath for uint256;
 
-  ICOStartSale public sale;
+  ICOStartSaleInterface public sale;
   uint256 public cap;
   uint8 public feePerc;
   address public manager;
@@ -24,7 +26,7 @@ contract ICOStartReservation is Pausable {
   event Paid(uint256 netAmount, uint256 fee);
   event Canceled();
 
-  function ICOStartReservation(ICOStartSale _sale, uint256 _cap, uint8 _feePerc, address _manager) public {
+  function ICOStartReservation(ICOStartSaleInterface _sale, uint256 _cap, uint8 _feePerc, address _manager) public {
     require(_sale != (address(0)));
     require(_cap != 0);
     require(_feePerc >= 0);
@@ -143,8 +145,8 @@ contract ICOStartReservation is Pausable {
     uint256 netAmount;
     (fee, netAmount) = _getFeeAndNetAmount(weiCollected);
 
-    sale.buyTokens.value(netAmount)(this);
-    tokensReceived = sale.token().balanceOf(this);
+    require(address(sale).call.value(netAmount)(this));
+    tokensReceived = getToken().balanceOf(this);
 
     if (fee != 0) {
       manager.transfer(fee);
@@ -179,7 +181,7 @@ contract ICOStartReservation is Pausable {
       uint256 tokens = tokensReceived.mul(depositAmount).div(weiCollected);
       assert(tokens != 0);
       deposits[_beneficiary] = 0;
-      sale.token().transfer(_beneficiary, tokens);
+      getToken().transfer(_beneficiary, tokens);
     }
   }
 
@@ -187,9 +189,9 @@ contract ICOStartReservation is Pausable {
    * @dev Emergency brake. Send all ethers and tokens to the owner.
    */
   function destroy() onlyOwner public {
-    uint256 myTokens = sale.token().balanceOf(this);
+    uint256 myTokens = getToken().balanceOf(this);
     if (myTokens != 0) {
-      sale.token().transfer(owner, myTokens);
+      getToken().transfer(owner, myTokens);
     }
     selfdestruct(owner);
   }

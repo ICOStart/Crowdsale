@@ -1,11 +1,27 @@
+/*
+  8888888 .d8888b.   .d88888b.   .d8888b.  888                     888                 888      
+    888  d88P  Y88b d88P" "Y88b d88P  Y88b 888                     888                 888      
+    888  888    888 888     888 Y88b.      888                     888                 888      
+    888  888        888     888  "Y888b.   888888  8888b.  888d888 888888      .d8888b 88888b.  
+    888  888        888     888     "Y88b. 888        "88b 888P"   888        d88P"    888 "88b 
+    888  888    888 888     888       "888 888    .d888888 888     888        888      888  888 
+    888  Y88b  d88P Y88b. .d88P Y88b  d88P Y88b.  888  888 888     Y88b.  d8b Y88b.    888  888 
+  8888888 "Y8888P"   "Y88888P"   "Y8888P"   "Y888 "Y888888 888      "Y888 Y8P  "Y8888P 888  888 
+
+  Rocket startup for your ICO
+
+  The innovative platform to create your initial coin offering (ICO) simply, safely and professionally.
+  All the services your project needs: KYC, AI Audit, Smart contract wizard, Legal template,
+  Master Nodes management, on a single SaaS platform!
+*/
 pragma solidity ^0.4.21;
 
+import "./zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./zeppelin-solidity/contracts/lifecycle/Pausable.sol";
-import "./zeppelin-solidity/contracts/crowdsale/emission/AllowanceCrowdsale.sol";
+import "./zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
-contract ICOStartSale is
-  AllowanceCrowdsale,
-  Pausable {
+contract ICOStartSale is Pausable {
+  using SafeMath for uint256;
 
   struct Period {
     uint256 startTimestamp;
@@ -16,6 +32,20 @@ contract ICOStartSale is
   Period[] private periods;
   mapping(address => bool) public whitelistedAddresses;
   mapping(address => uint256) public whitelistedRates;
+  using SafeMath for uint256;
+
+  ERC20 public token;
+  address public wallet;
+  address public tokenWallet;
+  uint256 public weiRaised;
+
+  /**
+   * @dev A purchase was made.
+   * @param _purchaser Who paid for the tokens.
+   * @param _value Total purchase price in weis.
+   * @param _amount Amount of tokens purchased.
+   */
+  event TokensPurchased(address indexed _purchaser, uint256 _value, uint256 _amount);
 
   uint256 constant public MINIMUM_AMOUNT = 0.05 ether;
   uint256 constant public MAXIMUM_NON_WHITELIST_AMOUNT = 5 ether;
@@ -26,10 +56,37 @@ contract ICOStartSale is
    * @param _token Address of the token being sold.
    * @param _tokenWallet Address holding the tokens, which has approved allowance to this contract.
    */
-  function ICOStartSale(address _wallet, ERC20 _token, address _tokenWallet) public
-    Crowdsale(_wallet, _token)
-    AllowanceCrowdsale(_tokenWallet)
-  {
+  function ICOStartSale(address _wallet, ERC20 _token, address _tokenWallet) public {
+    require(_wallet != address(0));
+    require(_token != address(0));
+    require(_tokenWallet != address(0));
+
+    wallet = _wallet;
+    token = _token;
+    tokenWallet = _tokenWallet;
+  }
+
+  /**
+   * @dev Send weis, get tokens.
+   */
+  function () external payable {
+    // Preconditions.
+    require(msg.sender != address(0));
+    require(msg.value >= MINIMUM_AMOUNT);
+    require(isOpen());
+    if (msg.value > MAXIMUM_NON_WHITELIST_AMOUNT) {
+      if (!isAddressInWhitelist(msg.sender)) {
+        revert();
+      }
+    }
+
+    uint256 tokenAmount = getTokenAmount(msg.sender, msg.value);
+    weiRaised = weiRaised.add(msg.value);
+
+    token.transferFrom(tokenWallet, msg.sender, tokenAmount);
+    emit TokensPurchased(msg.sender, msg.value, tokenAmount);
+
+    wallet.transfer(msg.value);
   }
 
   /**
@@ -136,6 +193,39 @@ contract ICOStartSale is
     return ((!paused) && (_getCurrentPeriod().rate != 0));
   }
 
+  /**
+   * @dev Current rate for the specified purchaser.
+   * @param _purchaser Purchaser address (may or may not be whitelisted).
+   * @return Custom rate for the purchaser, or current standard rate if no custom rate was whitelisted.
+   */
+  function getCurrentRate(address _purchaser) public view returns (uint256 rate) {
+    Period memory currentPeriod = _getCurrentPeriod();
+    require(currentPeriod.rate != 0);
+    rate = whitelistedRates[_purchaser];
+    if (rate == 0) {
+      rate = currentPeriod.rate;
+    }
+  }
+
+  /**
+   * @dev Number of tokens that a specified address would get by sending right now
+   * the specified amount.
+   * @param _purchaser Purchaser address (may or may not be whitelisted).
+   * @param _weiAmount Value in wei to be converted into tokens.
+   * @return Number of tokens that can be purchased with the specified _weiAmount.
+   */
+  function getTokenAmount(address _purchaser, uint256 _weiAmount) public view returns (uint256) {
+    return _weiAmount.mul(getCurrentRate(_purchaser));
+  }
+
+  /**
+   * @dev Checks the amount of tokens left in the allowance.
+   * @return Amount of tokens remaining for sale.
+   */
+  function remainingTokens() public view returns (uint256) {
+    return token.allowance(tokenWallet, this);
+  }
+
   /*
    * Internal functions
    */
@@ -153,35 +243,4 @@ contract ICOStartSale is
     }
   }
 
-  /**
-   * @dev Validation of an incoming purchase. Use require statements to revert state when conditions are not met. Use super to concatenate validations.
-   * @param _beneficiary Address performing the token purchase
-   * @param _weiAmount Value in wei involved in the purchase
-   */
-  function _preValidatePurchase(address _beneficiary, uint256 _weiAmount) internal {
-    super._preValidatePurchase(_beneficiary, _weiAmount);
-    
-    require(_weiAmount >= MINIMUM_AMOUNT);
-    require(isOpen());
-    if (_weiAmount > MAXIMUM_NON_WHITELIST_AMOUNT) {
-      if (!isAddressInWhitelist(_beneficiary)) {
-        revert();
-      }
-    }
-  }
-
-  /**
-   * @dev Override to extend the way in which ether is converted to tokens.
-   * @param _weiAmount Value in wei to be converted into tokens
-   * @return Number of tokens that can be purchased with the specified _weiAmount
-   */
-  function _getTokenAmount(address _beneficiary, uint256 _weiAmount) internal view returns (uint256) {
-    Period memory currentPeriod = _getCurrentPeriod();
-    require(currentPeriod.rate != 0);
-    uint256 rate = whitelistedRates[_beneficiary];
-    if (rate == 0) {
-      rate = currentPeriod.rate;
-    }
-    return _weiAmount.mul(rate);
-  }
 }
