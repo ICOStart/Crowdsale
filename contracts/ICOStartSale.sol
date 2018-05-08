@@ -1,19 +1,3 @@
-/*
-  8888888 .d8888b.   .d88888b.   .d8888b.  888                     888                 888      
-    888  d88P  Y88b d88P" "Y88b d88P  Y88b 888                     888                 888      
-    888  888    888 888     888 Y88b.      888                     888                 888      
-    888  888        888     888  "Y888b.   888888  8888b.  888d888 888888      .d8888b 88888b.  
-    888  888        888     888     "Y88b. 888        "88b 888P"   888        d88P"    888 "88b 
-    888  888    888 888     888       "888 888    .d888888 888     888        888      888  888 
-    888  Y88b  d88P Y88b. .d88P Y88b  d88P Y88b.  888  888 888     Y88b.  d8b Y88b.    888  888 
-  8888888 "Y8888P"   "Y88888P"   "Y8888P"   "Y888 "Y888888 888      "Y888 Y8P  "Y8888P 888  888 
-
-  Rocket startup for your ICO
-
-  The innovative platform to create your initial coin offering (ICO) simply, safely and professionally.
-  All the services your project needs: KYC, AI Audit, Smart contract wizard, Legal template,
-  Master Nodes management, on a single SaaS platform!
-*/
 pragma solidity ^0.4.21;
 
 import "./zeppelin-solidity/contracts/math/SafeMath.sol";
