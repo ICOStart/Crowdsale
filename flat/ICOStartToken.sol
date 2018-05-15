@@ -555,10 +555,7 @@ contract ICOStartToken is BurnableToken, MintableToken, DetailedERC20, LockableW
 
     for (uint i = 0; i < _to.length; i++)
     {
-      if (!transfer(_to[i], _value))
-      {
-        revert();
-      }
+      transfer(_to[i], _value);
     }
   }
 
@@ -576,10 +573,7 @@ contract ICOStartToken is BurnableToken, MintableToken, DetailedERC20, LockableW
 
     for (uint i = 0; i < _to.length; i++)
     {
-      if (!transfer(_to[i], _values[i]))
-      {
-        revert();
-      }
+      transfer(_to[i], _values[i]);
     }
   }
 
