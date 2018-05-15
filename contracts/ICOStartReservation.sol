@@ -30,6 +30,9 @@ contract ICOStartReservation is Pausable {
     require(_sale != (address(0)));
     require(_cap != 0);
     require(_feePerc >= 0);
+    if (_feePerc != 0) {
+      require(_manager != 0x0);
+    }
 
     sale = _sale;
     cap = _cap;
