@@ -59,9 +59,7 @@ contract ICOStartSale is Pausable {
     require(msg.value >= MINIMUM_AMOUNT);
     require(isOpen());
     if (msg.value > MAXIMUM_NON_WHITELIST_AMOUNT) {
-      if (!isAddressInWhitelist(msg.sender)) {
-        revert();
-      }
+      require(isAddressInWhitelist(msg.sender));
     }
 
     uint256 tokenAmount = getTokenAmount(msg.sender, msg.value);
