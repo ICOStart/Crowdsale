@@ -62,9 +62,6 @@ contract ICOStartPromo {
     }
   }
 
-  function() public payable {
-  }
-
   function transferOwnership(address newOwner) public onlyOwner {
     require(newOwner != address(0));
     emit OwnershipTransferred(owner, newOwner);
