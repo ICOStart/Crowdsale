@@ -8,7 +8,6 @@ import "./LockableWhitelisted.sol";
 contract ICOStartToken is BurnableToken, MintableToken, DetailedERC20, LockableWhitelisted {
 
   uint256 constant internal DECIMALS = 18;
-  uint256 constant internal INITIAL_SUPPLY = 60000000 * 10 ** DECIMALS;
 
   function ICOStartToken (uint256 _initialSupply) public
     BurnableToken()

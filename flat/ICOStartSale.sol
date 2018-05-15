@@ -193,7 +193,6 @@ contract ICOStartSale is Pausable {
   Period[] private periods;
   mapping(address => bool) public whitelistedAddresses;
   mapping(address => uint256) public whitelistedRates;
-  using SafeMath for uint256;
 
   ERC20 public token;
   address public wallet;
