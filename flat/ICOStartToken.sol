@@ -139,9 +139,10 @@ contract Whitelist is Ownable {
 // File: contracts\LockableWhitelisted.sol
 
 /**
- * @title A Whitelist contract that can be locked and unlocked. Provides a modifier
+ * @dev A Whitelist contract that can be locked and unlocked. Provides a modifier
  * to check for locked state plus functions and events. The contract is never locked for
- * whitelisted addresses.
+ * whitelisted addresses. The contracts starts off unlocked and can be locked and
+ * then unlocked a single time. Once unlocked, the contract can never be locked back.
  * @dev Base contract which allows children to implement an emergency stop mechanism.
  */
 contract LockableWhitelisted is Whitelist {
@@ -149,7 +150,7 @@ contract LockableWhitelisted is Whitelist {
   event Unlocked();
 
   bool public locked = false;
-
+  bool private unlockedOnce = false;
 
   /**
    * @dev Modifier to make a function callable only when the contract is not locked
@@ -172,6 +173,7 @@ contract LockableWhitelisted is Whitelist {
    * @dev Called by the owner to lock.
    */
   function lock() onlyOwner public {
+    require(!unlockedOnce);
     if (!locked) {
       locked = true;
       emit Locked();
@@ -184,6 +186,7 @@ contract LockableWhitelisted is Whitelist {
   function unlock() onlyOwner public {
     if (locked) {
       locked = false;
+      unlockedOnce = true;
       emit Unlocked();
     }
   }
