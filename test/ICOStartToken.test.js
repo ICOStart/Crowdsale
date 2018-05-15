@@ -21,7 +21,7 @@ contract('ICOStartToken', function ([owner, newOwner, other, airdrop1, airdrop2,
     this.token = await Token.new(INITIAL_SUPPLY, { from: owner });
     this.token.should.exist;
   });
-  
+
   it('should be owned by its creator', async function () {
     (await this.token.owner()).should.be.equal(owner);
   });
@@ -50,7 +50,7 @@ contract('ICOStartToken', function ([owner, newOwner, other, airdrop1, airdrop2,
   });
 
   it('should allow whitelisted addresses to transfer tokens', async function () {
-    await this.token.transfer(other, TRANSFER_AMOUNT).should.be.fulfilled;    
+    await this.token.transfer(other, TRANSFER_AMOUNT).should.be.fulfilled;
   });
 
   it('should not allow non-whitelisted addresses to transfer tokens', async function () {
@@ -66,25 +66,12 @@ contract('ICOStartToken', function ([owner, newOwner, other, airdrop1, airdrop2,
     await this.token.multiTransfer([owner], [TRANSFER_AMOUNT.div(2)], { from: other }).should.be.fulfilled;
   });
 
-  it('should not allow transfers after locking', async function () {
-    await this.token.transfer(other, TRANSFER_AMOUNT.mul(2)).should.be.fulfilled;
-    await this.token.transfer(owner, TRANSFER_AMOUNT, { from: other }).should.be.rejectedWith(EVMRevert);
+  it('should not allow locking the contract back after unlocking', async function () {
+    await this.token.transfer(other, TRANSFER_AMOUNT).should.be.fulfilled;
     await this.token.unlock().should.be.fulfilled;
-    await this.token.transfer(owner, TRANSFER_AMOUNT, { from: other }).should.be.fulfilled;
-    await this.token.lock().should.be.fulfilled;
-    await this.token.transfer(owner, TRANSFER_AMOUNT, { from: other }).should.be.rejectedWith(EVMRevert);
-    await this.token.multiTransfer([owner], [TRANSFER_AMOUNT], { from: other }).should.be.rejectedWith(EVMRevert);
-  });
-
-  it('should allow whitelisted transfers even after locking', async function () {
-    await this.token.transfer(other, TRANSFER_AMOUNT.mul(2)).should.be.fulfilled;
-    await this.token.transfer(owner, TRANSFER_AMOUNT, { from: other }).should.be.rejectedWith(EVMRevert);
-    await this.token.unlock().should.be.fulfilled;
-    await this.token.transfer(owner, TRANSFER_AMOUNT, { from: other }).should.be.fulfilled;
-    await this.token.lock().should.be.fulfilled;
-    await this.token.transfer(owner, TRANSFER_AMOUNT, { from: other }).should.be.rejectedWith(EVMRevert);
-    await this.token.addAddressToWhitelist(other, { from: owner }).should.be.fulfilled;
-    await this.token.transfer(owner, TRANSFER_AMOUNT, { from: other }).should.be.fulfilled;
+    await this.token.lock().should.be.rejectedWith(EVMRevert);
+    await this.token.transfer(owner, TRANSFER_AMOUNT.div(2), { from: other }).should.be.fulfilled;
+    await this.token.multiTransfer([owner], [TRANSFER_AMOUNT.div(2)], { from: other }).should.be.fulfilled;
   });
 
   it('should allow burning tokens', async function () {
