@@ -181,7 +181,7 @@ contract LockableWhitelisted is Whitelist {
   /**
    * @dev Called by the owner to unlock.
    */
-  function unlock() onlyOwner public returns (bool) {
+  function unlock() onlyOwner public {
     if (locked) {
       locked = false;
       emit Unlocked();
